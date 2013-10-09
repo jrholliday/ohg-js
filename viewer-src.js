@@ -11,6 +11,22 @@ String.prototype.format = function() {
     return formatted;
 };
 
+if (!google.maps.Polygon.prototype.getBounds) {
+        google.maps.Polygon.prototype.getBounds = function(latLng) {
+                var bounds = new google.maps.LatLngBounds();
+                var paths = this.getPaths();
+                var path;
+
+                for (var p = 0; p < paths.getLength(); p+=1) {
+                        path = paths.getAt(p);
+                        for (var i = 0; i < path.getLength(); i+=1) {
+                                bounds.extend(path.getAt(i));
+                        }
+                }
+                return bounds;
+        };
+}
+
 function init_viewer(uid) {
     /* Global variables (accessed accross multiple functions) */
     var map;            /* Storage for google map object      */
@@ -584,8 +600,7 @@ function init_viewer(uid) {
 	layers.bigeq = [];
 	jQuery.getJSON(tdir+'ajax/usgsproxy', function(data) {
 	    var features = data.features;
-	    //for (var i=0; i<features.length; i+=1) {
-	    for (var i=features.length-1; i>=0; i=i-1) {
+	    for (var i=0; i<features.length; i+=1) {
 		var place = features[i].properties.place;
 		var info = features[i].properties.url;
 		var date = new Date(features[i].properties.time);
@@ -596,10 +611,12 @@ function init_viewer(uid) {
 
 		var marker = new StyledMarker({
                     styleIcon: new StyledIcon(StyledIconTypes.MARKER, {
+                        //text: "M" + Math.floor(mag).toString(),
                         color: color(mag/8.0)
                     }),
                     position: pos,
 		    title: "M: " + mag.toString(10),
+                    zIndex: features.length-i,
 		    info: info_template.format(place, date, mag, info)
                 });
 
@@ -742,7 +759,7 @@ function init_viewer(uid) {
 
 	options += '<option value="wo">Global Forecast (M&gt;6.5)</option>';
 	options += '<option value="ca">California Forecast (M&gt;5.0)</option>';
-	options += '<option value="jp">Japan Forecast (M&gt;6.5)</option>';
+	//options += '<option value="jp">Japan Forecast (M&gt;6.5)</option>';
 
 	/* Update the select box */
 	jQuery('#forecasts').html(options);
@@ -909,6 +926,7 @@ function init_viewer(uid) {
 
 	bounds += lat + " " + lng + " ";
       }
+      bounds += path[0].lat().toFixed(3) + " " + path[0].lng().toFixed(3);
       bounds = bounds.replace(' ','+');
 
       var opts = "bounds="+bounds;
@@ -927,6 +945,7 @@ function init_viewer(uid) {
 
 	bounds += lat + " " + lng + " ";
       }
+      bounds += path[0].lat().toFixed(3) + " " + path[0].lng().toFixed(3);
       bounds = bounds.replace(' ','+');
 
       var opts = "bounds="+bounds;
@@ -1092,7 +1111,7 @@ function init_viewer(uid) {
 
 	    var baseURL = "https://hazards.fema.gov/gis/nfhl/services/public/NFHLWMS/MapServer/WMSServer?";
 	    var format = "image/png";
-	    var layers = "4,5,32";
+	    var layers = "4,32";
 	    var styles = ""; //styles to use for the layers
 
 	    var srs = "EPSG:4326";
