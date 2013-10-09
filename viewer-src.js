@@ -1140,6 +1140,9 @@ function init_viewer(uid) {
 		if ( file === "mapserver" ) {
                     map.overlayMapTypes.push(MapserverLayer);
                     forecast = MapserverLayer;
+		} else if ( file === "gdacs" ) {
+		    forecast = new google.maps.KmlLayer('http://gdacs.org/xml/gdacs.kml', {suppressInfoWindows: false, preserveViewport: true});
+                    forecast.setMap(map);
 		} else {
 		    forecast = new google.maps.KmlLayer(kmz+file, {suppressInfoWindows: true, preserveViewport: true});
 		    forecast.setMap(map);
