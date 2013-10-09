@@ -150,7 +150,7 @@ function init_basic_forecast(uid) {
 		    }
 		    else
 		    {
-			text  = '<div style="width:394px; margin:0 auto; border:1px solid #808080; background-color: LightYellow; font-size:120%; text-align:left; padding:5px 5px 0 5px;">';
+			text  = '<div style="margin:0 auto; border:1px solid #808080; background-color: LightYellow; font-size:120%; text-align:left; padding:5px 5px 0 5px;">';
 			text += 'The chances of a damaging earthquake (magnitude 5 or greater) happening within <span style="font-weight:bold;">50 miles</span> of <span style="font-weight:bold;">' + place + '</span> are:';
 			text += '<ul style="padding-left: 10px;">';
 			text += '<li><span style="font-weight:bold;">' + formatValue(probs[["5.0","30"]]) + '</span> within <span style="font-weight:bold;">1 month</span></li>';
