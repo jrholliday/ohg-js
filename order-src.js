@@ -13,7 +13,7 @@
 function init_order_defaults()
 {
      /* Variable Declaration */
-     var geocoder = new google.maps.ClientGeocoder();
+     var geocoder = new google.maps.Geocoder();
 
      jQuery('#edit-attributes-1').val('');
      jQuery('#edit-attributes-6').val('$500,000');
@@ -60,16 +60,16 @@ function init_order_defaults()
     // Add search functionality
     jQuery('#edit-attributes-1').change( function() {
 
-	geocoder.getLocations( jQuery('#edit-attributes-1').val(), function(response) {
+        geocoder.geocode({address: jQuery('#edit-attributes-1').val()}, function(results, status) {
 	    /* Variable Declaration */
 	    var loc;
 
-            if (!response || response.Status.code !== 200) {
+            if (status !== google.maps.GeocoderStatus.OK) {
 		//alert("Status Code:" + response.Status.code);
             }
             else
             {
-		loc = response.Placemark[0].address;
+                loc = results[0].formatted_address;
 		loc = loc.substr(0,loc.lastIndexOf(','));
 		jQuery('#edit-attributes-1').val(loc);
 
